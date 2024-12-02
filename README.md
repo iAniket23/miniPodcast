@@ -1,4 +1,4 @@
-# nanoCast
+# miniPodcast
 Submission for Google Chrome Built-in AI challenge 
 1. Chrome extension/or just adding something in front of existing webpage article.
 2. Summarize the webpage and convert it into a podcast in a langgraph style agents?
