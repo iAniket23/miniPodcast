@@ -4,8 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>miniPodcast</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 10px; }
+        button { padding: 10px; background-color: #0f1924; color: white; border: none; cursor: pointer; }
+    </style>
 </head>
 <body>
-    
+    <button id="Play">Play</button>
+    <p id="fullText"></p>
+    <h1>miniPodcast</h1>
+    <p id="summary"></p>
+
+    <audio controls id="audioPlayer" style="display: none;"></audio>
+    <script src="popup.js"></script>
 </body>
 </html>
