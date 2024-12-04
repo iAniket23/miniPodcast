@@ -25,11 +25,27 @@ document.getElementById('Play').addEventListener('click', async () => {
             // Generate a podcast script based on the summary
             const podcastScript = await podcast_gemini_script(summary);
             document.getElementById('pc').innerText = podcastScript;
+
+            // Fetch audio from text-to-speech API
+            const audio = await fetchAudio(podcastScript);
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.src = URL.createObjectURL(audio);
+            audioPlayer.style.display = 'block';
         });
     } catch (error) {
         console.error('Error querying tabs or executing script:', error);
     }
 });
+
+async function fetchAudio(text) {
+    const response = await fetch('https://api.text-to-speech-service.com/convert', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    const blob = await response.blob();
+    return blob;
+  }
 
 // Function to extract text from the headings and paragraphs on the page
 function extractWebText() {
@@ -48,6 +64,7 @@ async function gemini_summarizer(text) {
     try {
         const canSummarize = await ai.summarizer.capabilities();
         let summarizer;
+        document.getElementById('pc').innerText = "Summarizing...";
         if (canSummarize && canSummarize.available !== 'no') {
             if (canSummarize.available === 'readily') {
                 // The summarizer can immediately be used.
@@ -63,6 +80,7 @@ async function gemini_summarizer(text) {
             }
             const summary = await summarizer.summarize(text);
             console.log('Summary:', summary);
+            document.getElementById('pc').innerText = "Generating podcast script...";
             summarizer.destroy();
             return summary;
         } else {
@@ -89,6 +107,7 @@ async function podcast_gemini_script (text) {
 
             let fullText = '';
             for await (const chunk of stream) {
+                document.getElementById('pc').innerText = chunk;
                 console.log(chunk);
                 fullText = chunk;
             }
