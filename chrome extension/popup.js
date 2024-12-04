@@ -26,26 +26,16 @@ document.getElementById('Play').addEventListener('click', async () => {
             const podcastScript = await podcast_gemini_script(summary);
             document.getElementById('pc').innerText = podcastScript;
 
-            // Fetch audio from text-to-speech API
-            const audio = await fetchAudio(podcastScript);
-            const audioPlayer = document.getElementById('audioPlayer');
-            audioPlayer.src = URL.createObjectURL(audio);
-            audioPlayer.style.display = 'block';
+            // Speak the podcast script using the browser's text-to-speech engine
+            const utterance = new SpeechSynthesisUtterance(podcastScript);
+            utterance.voice = speechSynthesis.getVoices()[0];
+            window.speechSynthesis.speak(utterance);
+
         });
     } catch (error) {
         console.error('Error querying tabs or executing script:', error);
     }
 });
-
-async function fetchAudio(text) {
-    const response = await fetch('https://api.text-to-speech-service.com/convert', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
-    });
-    const blob = await response.blob();
-    return blob;
-  }
 
 // Function to extract text from the headings and paragraphs on the page
 function extractWebText() {
