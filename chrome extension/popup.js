@@ -1,6 +1,5 @@
 // This script is executed when the popup is opened
 
-
 // Event listener for the Play button
 document.getElementById('Play').addEventListener('click', async () => {
     try {
@@ -18,16 +17,14 @@ document.getElementById('Play').addEventListener('click', async () => {
             }
 
             const extractedText = results[0]?.result || "No content found.";
-            document.getElementById('fullText').innerText = extractedText;
             console.log('Going to summarize:');
+
             // summarize the extracted text using the Gemini summarizer
             const summary = await gemini_summarizer(extractedText);
-            document.getElementById('summary').innerText = summary;
 
             // Generate a podcast script based on the summary
             const podcastScript = await podcast_gemini_script(summary);
             document.getElementById('pc').innerText = podcastScript;
-
         });
     } catch (error) {
         console.error('Error querying tabs or executing script:', error);
@@ -88,16 +85,17 @@ async function podcast_gemini_script (text) {
             const session = await ai.languageModel.create();
             console.log('Session created');
             // Prompt the model and wait for the whole result to come back.
-            // const result = await session.prompt("write a two person conversation script that summarizes the following text (very casually including ummm and filler words: )" + text);
-            // use promptStreaming
-            const stream = session.promptStreaming("write a very short two person conversation script that talks about following text (very casually including ummms and filler words: )" + text);
+            const stream = session.promptStreaming("write a short two person podcast script that (without setting up characters text) discusses the following the text on the website (very casually including ummms and filler words: )" + text);
+
             let fullText = '';
             for await (const chunk of stream) {
                 console.log(chunk);
-                fullText += chunk;
+                fullText = chunk;
             }
+
             session.destroy();
             return fullText;
+
         } else {
             console.warn("Language model is not available.");
         }
